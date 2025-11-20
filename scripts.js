@@ -306,9 +306,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const total = paths + shapes;
 
         if (total > 0) {
+            statsDisplay.style.display = 'block';
             statsDisplay.textContent = `${total} element${total !== 1 ? 's' : ''}`;
         } else {
             statsDisplay.textContent = '';
+            statsDisplay.style.display = 'none';
         }
     }
 
@@ -473,6 +475,8 @@ document.addEventListener('DOMContentLoaded', function () {
         empty.className = 'small';
         empty.textContent = 'No editable elements found.';
         inspector.appendChild(empty);
+        previewPlaceholder.style.display = 'flex';
+        svgPreview.style.display = 'none';
     }
 
     function buildInspector(svgElement) {
@@ -489,19 +493,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const header = document.createElement('div');
             header.className = 'inspector-header';
-            
+
             const labelContainer = document.createElement('div');
             labelContainer.className = 'inspector-label-container';
-            
+
             const label = document.createElement('div');
             label.textContent = `#${idx + 1} <${el.tagName.toLowerCase()}${formatDescriptor(el)}> `;
             const mini = document.createElement('div');
             mini.className = 'small';
             mini.textContent = summarizeElement(el);
-            
+
             labelContainer.appendChild(label);
             labelContainer.appendChild(mini);
-            
+
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-element-btn';
             deleteBtn.title = 'Delete element';
@@ -510,10 +514,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (confirm(`Delete this ${el.tagName.toLowerCase()} element?`)) {
                     el.remove();
                     buildInspector(currentSvg);
+                    updateStats(currentSvg);
                     showToast('Element deleted', 'success');
                 }
             });
-            
+
             header.appendChild(labelContainer);
             header.appendChild(deleteBtn);
             row.appendChild(header);
